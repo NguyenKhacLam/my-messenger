@@ -50,14 +50,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.HolderUser> im
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HolderUser holder, int position) {
+    public void onBindViewHolder(@NonNull HolderUser holder, final int position) {
         final User user = data.get(position);
         holder.bindView(user);
         if (listener != null) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+            holder.checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.onClickUser(user);
+                    listener.onClickUser(user, position);
                 }
             });
         }
@@ -127,7 +127,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.HolderUser> im
     }
 
     public interface OnClickUserListener {
-        void onClickUser(User user);
+        void onClickUser(User user, int position);
     }
 
 }
