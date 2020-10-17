@@ -1,7 +1,9 @@
 package com.project.messenger.ui.messenger;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +20,10 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.project.messenger.R;
 import com.project.messenger.adapters.RoomAdapter;
 import com.project.messenger.models.Room;
@@ -39,6 +45,9 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
     private RecyclerView recyclerView;
     private RoomAdapter roomAdapter;
 
+    private FirebaseUser currentUser;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,14 +57,12 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
         loadData();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        Glide.with(this).load(currentUser.getPhotoUrl()).into(userImage);
-    }
-
     private void loadData() {
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        Glide.with(this).load(currentUser.getPhotoUrl()).into(userImage);
+
+        checkHasRequest();
+
         ArrayList<Room> rooms = new ArrayList<>();
         rooms.add(new Room("ashdgahssd", "Qwerty", "https://i.pinimg.com/564x/d6/c0/37/d6c0373a51aa7de02862a96b75b11826.jpg", "21/122/2020"));
         rooms.add(new Room("asdfgdfdsf", "K32B1", "https://i.pinimg.com/564x/d6/c0/37/d6c0373a51aa7de02862a96b75b11826.jpg", "21/122/2020"));
@@ -90,7 +97,7 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
         startActivity(intent);
     }
 
-    private void swipeRecyclerView(RecyclerView recyclerView, final RoomAdapter adapter){
+    private void swipeRecyclerView(RecyclerView recyclerView, final RoomAdapter adapter) {
         ItemTouchHelper.SimpleCallback simpleCallbackDelete = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -100,7 +107,7 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Room room = adapter.getData().get(viewHolder.getAdapterPosition());
-                switch (direction){
+                switch (direction) {
                     case ItemTouchHelper.LEFT:
                         break;
                 }
@@ -108,7 +115,7 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
 
             @Override
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                new RecyclerViewSwipeDecorator.Builder(c,recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive)
+                new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
                         .addSwipeLeftActionIcon(R.drawable.ic_baseline_delete_24)
                         .addSwipeLeftBackgroundColor(ContextCompat.getColor(HomeActivity.this, R.color.colorRed))
                         .addSwipeLeftLabel("Delete")
@@ -124,7 +131,7 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.requestBtn:
                 startActivity(new Intent(this, RequestActivity.class));
                 break;
@@ -135,5 +142,23 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
                 startActivity(new Intent(this, CreateRoomActivity.class));
                 break;
         }
+    }
+
+
+    private void checkHasRequest() {
+        db.collection("requests")
+                .whereEqualTo("to", currentUser.getEmail())
+                .whereEqualTo("status", false)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        CardView dot = findViewById(R.id.requestDot);
+                        if (value.size() > 0) {
+                            dot.setVisibility(View.VISIBLE);
+                        } else {
+                            dot.setVisibility(View.GONE);
+                        }
+                    }
+                });
     }
 }

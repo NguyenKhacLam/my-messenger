@@ -101,6 +101,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.HolderRe
             }else {
                 message.setVisibility(View.VISIBLE);
                 acceptOrNot.setVisibility(View.INVISIBLE);
+                acceptBtn.setVisibility(View.VISIBLE);
+                denyBtn.setVisibility(View.VISIBLE);
             }
         }
     }

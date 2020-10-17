@@ -18,11 +18,24 @@
             android:layout_height="?attr/actionBarSize"/>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <TextView
+        android:id="@+id/tvRequestCount"
+        android:layout_marginTop="@dimen/padding_16"
+        android:textColor="@color/colorWhite"
+        android:paddingStart="@dimen/padding_16"
+        android:paddingEnd="@dimen/padding_16"
+        android:textSize="12sp"
+        android:layout_marginBottom="@dimen/padding_8"
+        android:text="Request count: 10"
         android:layout_below="@id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@id/tvRequestCount"
         android:id="@+id/rcRequest"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:padding="@dimen/padding_16"
+        android:paddingTop="@dimen/padding_16"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

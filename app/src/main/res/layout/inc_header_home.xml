@@ -47,7 +47,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:visibility="invisible"
+        android:id="@+id/requestDot"
         android:layout_toEndOf="@id/requestNoti"
         android:layout_marginStart="-10dp"
         app:cardCornerRadius="9999dp"

@@ -18,7 +18,7 @@
         <activity android:name=".ui.messenger.RoomDetailsActivity" />
         <activity android:name=".ui.messenger.MessageRoomActivity" />
         <activity android:name=".ui.messenger.HomeActivity" />
-        <activity android:name=".ui.user.LoginActivity">
+        <activity android:name=".ui.user.LoginActivity" android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

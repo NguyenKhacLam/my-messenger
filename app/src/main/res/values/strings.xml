@@ -7,4 +7,6 @@
     <string name="cancel">Cancel</string>
     <string name="create">create</string>
     <string name="you_ve_accept_this_request">You\'ve accept this request!</string>
+    <string name="log_out">Log out</string>
+    <string name="settings">Settings</string>
 </resources>
