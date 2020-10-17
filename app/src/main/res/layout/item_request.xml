@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/colorPrimary"
+    android:gravity="center_vertical"
+    android:paddingStart="@dimen/padding_16"
+    android:paddingEnd="@dimen/padding_16"
+    android:layout_marginBottom="@dimen/padding_16"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/requestFromImage"
+        android:src="@drawable/girl"
+        android:layout_width="60dp"
+        android:layout_height="60dp"/>
+
+    <TextView
+        android:id="@+id/requestFromName"
+        android:layout_marginStart="@dimen/padding_16"
+        android:textColor="@color/colorWhite"
+        android:layout_toEndOf="@id/requestFromImage"
+        style="@style/TitleItemStyle"
+        android:text="Rác rưởi vkl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/requestFromMessage"
+        android:layout_marginStart="@dimen/padding_16"
+        android:textColor="@color/colorWhite"
+        android:layout_below="@id/requestFromName"
+        android:layout_toEndOf="@id/requestFromImage"
+        android:text="Rác rưởi vkl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_below="@id/requestFromMessage"
+        android:layout_toEndOf="@id/requestFromImage"
+        android:layout_marginStart="@dimen/padding_16"
+        android:layout_width="wrap_content"
+        android:paddingTop="@dimen/padding_16"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/requestAcceptBtn"
+            android:text="Accept"
+            android:layout_marginEnd="@dimen/padding_16"
+            android:background="@drawable/accept_btn"
+            android:textColor="@color/colorWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"/>
+        <Button
+            android:id="@+id/requestDenyBtn"
+            android:text="Deny"
+            android:background="@drawable/deny_btn"
+            android:textColor="@color/colorWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

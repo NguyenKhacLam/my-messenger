@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/padding_16"
+    android:paddingEnd="@dimen/padding_16"
+    android:layout_marginBottom="@dimen/padding_16"
+    android:background="@color/colorPrimary">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userImage"
+        android:src="@drawable/girl"
+        android:layout_width="50dp"
+        android:layout_height="50dp"/>
+
+    <TextView
+        android:id="@+id/userName"
+        android:text="Nguyen Khac Lam"
+        android:layout_toEndOf="@id/userImage"
+        android:textColor="@color/colorWhite"
+        android:textSize="20sp"
+        android:layout_marginStart="@dimen/padding_16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_below="@id/userName"
+        android:id="@+id/userEmail"
+        android:text="khaclam2409@gmail.com"
+        android:layout_toEndOf="@id/userImage"
+        android:textColor="@color/colorWhite"
+        android:layout_marginStart="@dimen/padding_16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <CheckBox
+        android:id="@+id/checkBoxUser"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

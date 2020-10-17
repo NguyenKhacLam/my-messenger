@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Messenger</string>
+    <string name="welcome_to_messenger">Welcome to \nMessenger</string>
+    <string name="search">Search</string>
+    <string name="enter_a_message">Enter a message</string>
+    <string name="create_room">Create Room</string>
+    <string name="cancel">Cancel</string>
+    <string name="create">create</string>
+</resources>
