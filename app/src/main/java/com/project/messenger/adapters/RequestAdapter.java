@@ -72,7 +72,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.HolderRe
 
     public class HolderRequest extends RecyclerView.ViewHolder {
         private ImageView imageView;
-        private TextView from, message;
+        private TextView from, message, acceptOrNot;
         private Button acceptBtn, denyBtn;
 
         public HolderRequest(@NonNull View itemView) {
@@ -84,6 +84,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.HolderRe
             imageView = itemView.findViewById(R.id.requestFromImage);
             from = itemView.findViewById(R.id.requestFromName);
             message = itemView.findViewById(R.id.requestFromMessage);
+            acceptOrNot = itemView.findViewById(R.id.acceptOrNot);
             acceptBtn = itemView.findViewById(R.id.requestAcceptBtn);
             denyBtn = itemView.findViewById(R.id.requestDenyBtn);
         }
@@ -92,6 +93,15 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.HolderRe
             Glide.with(imageView).load(request.getFromUrl()).into(imageView);
             from.setText(request.getFrom());
             message.setText(request.getMessage());
+            if (request.getStatus()){
+                message.setVisibility(View.INVISIBLE);
+                acceptOrNot.setVisibility(View.VISIBLE);
+                acceptBtn.setVisibility(View.GONE);
+                denyBtn.setVisibility(View.GONE);
+            }else {
+                message.setVisibility(View.VISIBLE);
+                acceptOrNot.setVisibility(View.INVISIBLE);
+            }
         }
     }
 

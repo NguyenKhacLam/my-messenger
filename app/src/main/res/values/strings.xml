@@ -6,4 +6,5 @@
     <string name="create_room">Create Room</string>
     <string name="cancel">Cancel</string>
     <string name="create">create</string>
+    <string name="you_ve_accept_this_request">You\'ve accept this request!</string>
 </resources>

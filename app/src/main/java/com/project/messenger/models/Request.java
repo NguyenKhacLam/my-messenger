@@ -8,6 +8,9 @@ public class Request {
     private boolean status;
     private String fromUrl;
 
+    public Request() {
+    }
+
     public Request(String id, String from, String message, boolean status, String fromUrl) {
         this.id = id;
         this.from = from;
@@ -42,6 +45,10 @@ public class Request {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public boolean getStatus() {
+        return status;
     }
 
     public String getId() {
