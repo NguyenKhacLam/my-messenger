@@ -92,7 +92,7 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
     @Override
     public void onClickRoom(Room room) {
         Intent intent = new Intent(this, MessageRoomActivity.class);
-        intent.putExtra("room", room);
+        intent.putExtra("roomId", room.getId());
         startActivity(intent);
     }
 

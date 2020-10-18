@@ -1,6 +1,7 @@
 package com.project.messenger.ui.messenger;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -11,17 +12,43 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.project.messenger.R;
+import com.project.messenger.adapters.MessageAdapter;
+import com.project.messenger.models.Message;
 
-public class MessageRoomActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+public class MessageRoomActivity extends AppCompatActivity implements View.OnClickListener {
+    private String roomId;
     private Toolbar toolbar;
     private RecyclerView recyclerView;
+    private MessageAdapter messageAdapter;
 
     private EditText edSend;
     private ImageView chooseImageBtn, sendBtn;
+
+    private FirebaseUser currentUser;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +57,13 @@ public class MessageRoomActivity extends AppCompatActivity {
 
         initView();
         setUpToolbar();
+        loadData();
+    }
+
+    private void loadData() {
+        Bundle extras = getIntent().getExtras();
+        roomId = extras.getString("roomId");
+        showMessages(roomId);
     }
 
     private void initView() {
@@ -38,6 +72,14 @@ public class MessageRoomActivity extends AppCompatActivity {
         edSend = findViewById(R.id.edSendMessage);
         chooseImageBtn = findViewById(R.id.btnSendImage);
         sendBtn = findViewById(R.id.btnSend);
+
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        messageAdapter = new MessageAdapter(getLayoutInflater());
+        recyclerView.setAdapter(messageAdapter);
+
+        sendBtn.setOnClickListener(this);
+        chooseImageBtn.setOnClickListener(this);
     }
 
     private void setUpToolbar() {
@@ -66,5 +108,73 @@ public class MessageRoomActivity extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+
+    private void showMessages(String roomId) {
+        db.collection("rooms")
+                .document(roomId)
+                .collection("messages")
+                .orderBy("createdAt", Query.Direction.ASCENDING)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        ArrayList<Message> messages = new ArrayList<>();
+                        for (QueryDocumentSnapshot doccument : value){
+                            Message message = new Message();
+
+                            message.setId(doccument.getId());
+                            message.setContent(doccument.get("content").toString());
+                            message.setSenderName(doccument.get("senderName").toString());
+                            message.setSenderEmail(doccument.get("senderEmail").toString());
+                            message.setSenderImage(doccument.get("senderImage").toString());
+                            message.setCreatedAt(doccument.get("createdAt").toString());
+
+                            messages.add(message);
+                        }
+                        messageAdapter.setData(messages);
+                    }
+                });
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnSend:
+                createMessage();
+                break;
+            case R.id.btnSendImage:
+                break;
+        }
+    }
+
+    private void createMessage() {
+        String content = edSend.getText().toString().trim();
+        if (content.isEmpty()){
+            Toast.makeText(this, "Please enter a message!", Toast.LENGTH_SHORT).show();
+        }
+
+        Map<String,Object> message = new HashMap<>();
+        message.put("content", content);
+        message.put("senderName", currentUser.getDisplayName());
+        message.put("senderEmail", currentUser.getEmail());
+        message.put("senderImage", currentUser.getPhotoUrl().toString());
+        message.put("createdAt", new Date());
+
+        db.collection("rooms")
+                .document(roomId)
+                .collection("messages")
+                .add(message)
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        edSend.setText("");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 }

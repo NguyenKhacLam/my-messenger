@@ -1,24 +1,34 @@
 package com.project.messenger.models;
 
 public class Message {
-    private int id;
+    private String id;
     private String content;
     private String senderName;
     private String senderEmail;
+    private String senderImage;
     private String createdAt;
 
     public Message() {
     }
 
-    public Message(int id, String content, String senderName, String senderEmail, String createdAt) {
+    public Message(String id, String content, String senderName, String senderEmail, String senderImage, String createdAt) {
         this.id = id;
         this.content = content;
         this.senderName = senderName;
         this.senderEmail = senderEmail;
+        this.senderImage = senderImage;
         this.createdAt = createdAt;
     }
 
-    public void setId(int id) {
+    public void setSenderImage(String senderImage) {
+        this.senderImage = senderImage;
+    }
+
+    public String getSenderImage() {
+        return senderImage;
+    }
+
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -38,7 +48,7 @@ public class Message {
         this.createdAt = createdAt;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

@@ -33,8 +33,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcMessage"
         android:layout_below="@+id/appbar"
-        android:layout_marginTop="@dimen/padding_16"
+        android:padding="@dimen/padding_16"
         android:layout_marginBottom="60dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -58,7 +59,10 @@
             android:background="@drawable/edit_text_search_background"
             android:layout_weight="6"
             android:hint="@string/enter_a_message"
-            android:padding="@dimen/padding_8"
+            android:paddingTop="@dimen/padding_8"
+            android:paddingBottom="@dimen/padding_8"
+            android:paddingStart="@dimen/padding_16"
+            android:paddingEnd="@dimen/padding_16"
             android:textColorHint="@color/colorWhite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
