@@ -18,8 +18,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -36,6 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CreateRoomActivity extends AppCompatActivity implements TextWatcher, UserAdapter.OnClickUserListener {
+    private static String TAG = "CreateRoomActivity";
     private Toolbar toolbar;
     private EditText edSearchUser;
     private Button doneChoosingBtn;
@@ -137,11 +140,13 @@ public class CreateRoomActivity extends AppCompatActivity implements TextWatcher
                     Toast.makeText(CreateRoomActivity.this, "Please enter room name", Toast.LENGTH_SHORT).show();
                 }else {
                     if (usersRoomList.size() == 0){
+                        loadingDialog.dismissDialog();
                         Toast.makeText(CreateRoomActivity.this, "Please select at least one user to chat!", Toast.LENGTH_SHORT).show();
                     }else {
                         for (User user : usersRoomList) {
                             createRequestInDb(user);
                         }
+                        createRoomInDb(name);
                     }
                 }
             }
@@ -182,6 +187,38 @@ public class CreateRoomActivity extends AppCompatActivity implements TextWatcher
                 Log.e("Create request", "onSuccess: " + e.getMessage());
             }
         });
+    }
+
+    private void createRoomInDb(String name){
+        ArrayList<String> listUserEmail = new ArrayList<>();
+        listUserEmail.add(currentUser.getEmail());
+
+        for (User user : usersRoomList) {
+            listUserEmail.add(user.getEmail());
+        }
+
+        Map<String, Object> room = new HashMap<>();
+        room.put("name", name);
+        room.put("imageUrl", "https://i.pinimg.com/564x/6a/a9/8a/6aa98a78f80433f60decb3c76fb016f1.jpg");
+        room.put("createdAt", new Date());
+        room.put("users", listUserEmail);
+
+        db.collection("rooms").add(room)
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        if (task.isSuccessful()){
+                            Toast.makeText(CreateRoomActivity.this, "Room created!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "onFailure: " + e.getMessage() );
+                    }
+                });
     }
 
     @Override

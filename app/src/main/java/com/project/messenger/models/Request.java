@@ -66,8 +66,4 @@ public class Request {
     public String getMessage() {
         return message;
     }
-
-    public boolean isStatus() {
-        return status;
-    }
 }

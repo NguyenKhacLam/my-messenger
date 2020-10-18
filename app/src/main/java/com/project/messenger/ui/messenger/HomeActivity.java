@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,15 +24,19 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.project.messenger.R;
 import com.project.messenger.adapters.RoomAdapter;
 import com.project.messenger.models.Room;
+import com.project.messenger.models.User;
 import com.project.messenger.ui.createRoom.CreateRoomActivity;
 import com.project.messenger.ui.request.RequestActivity;
 import com.project.messenger.ui.user.ProfileActivity;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
@@ -62,13 +67,7 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
         Glide.with(this).load(currentUser.getPhotoUrl()).into(userImage);
 
         checkHasRequest();
-
-        ArrayList<Room> rooms = new ArrayList<>();
-        rooms.add(new Room("ashdgahssd", "Qwerty", "https://i.pinimg.com/564x/d6/c0/37/d6c0373a51aa7de02862a96b75b11826.jpg", "21/122/2020"));
-        rooms.add(new Room("asdfgdfdsf", "K32B1", "https://i.pinimg.com/564x/d6/c0/37/d6c0373a51aa7de02862a96b75b11826.jpg", "21/122/2020"));
-        rooms.add(new Room("fgrhtyjghj", "VRV", "https://i.pinimg.com/564x/d6/c0/37/d6c0373a51aa7de02862a96b75b11826.jpg", "21/122/2020"));
-        rooms.add(new Room("ashdgrahfhsd", "HYS", "https://i.pinimg.com/564x/d6/c0/37/d6c0373a51aa7de02862a96b75b11826.jpg", "21/122/2020"));
-        roomAdapter.setData(rooms);
+        showRoomList();
     }
 
     private void initViews() {
@@ -144,7 +143,6 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
         }
     }
 
-
     private void checkHasRequest() {
         db.collection("requests")
                 .whereEqualTo("to", currentUser.getEmail())
@@ -158,6 +156,29 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
                         } else {
                             dot.setVisibility(View.GONE);
                         }
+                    }
+                });
+    }
+
+
+    private void showRoomList() {
+        db.collection("rooms")
+                .whereArrayContains("users", currentUser.getEmail())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        ArrayList<Room> rooms = new ArrayList<>();
+                        Log.d("Room", "onEvent: " + value.size());
+                        for (QueryDocumentSnapshot document : value){
+                            Room room = new Room();
+                            room.setId(document.getId());
+                            room.setName(document.get("name").toString());
+                            room.setImageUrl(document.get("imageUrl").toString());
+                            room.setCreatedAt(document.get("createdAt").toString());
+
+                            rooms.add(room);
+                        }
+                        roomAdapter.setData(rooms);
                     }
                 });
     }

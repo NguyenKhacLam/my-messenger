@@ -131,9 +131,9 @@ public class LoginActivity extends AppCompatActivity {
         db.collection("users")
                 .document(account.getId())
                 .set(user)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
+                    public void onComplete(@NonNull Task<Void> task) {
                         Log.d(TAG, "onSuccess: Document is created!");
                     }
                 })
