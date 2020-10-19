@@ -9,4 +9,6 @@
     <string name="you_ve_accept_this_request">You\'ve accept this request!</string>
     <string name="log_out">Log out</string>
     <string name="settings">Settings</string>
+    <string name="leave_room">Leave Room</string>
+    <string name="add_members">Add members</string>
 </resources>

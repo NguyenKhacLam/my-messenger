@@ -104,10 +104,23 @@ public class MessageRoomActivity extends AppCompatActivity implements View.OnCli
                 finish();
                 break;
             case R.id.roomDetails:
-                startActivity(new Intent(this, RoomDetailsActivity.class));
+                Intent intent = new Intent(this, RoomDetailsActivity.class);
+                intent.putExtra("roomId", roomId);
+                startActivity(intent);
                 break;
         }
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnSend:
+                createMessage();
+                break;
+            case R.id.btnSendImage:
+                break;
+        }
     }
 
     private void showMessages(String roomId) {
@@ -134,17 +147,6 @@ public class MessageRoomActivity extends AppCompatActivity implements View.OnCli
                         messageAdapter.setData(messages);
                     }
                 });
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btnSend:
-                createMessage();
-                break;
-            case R.id.btnSendImage:
-                break;
-        }
     }
 
     private void createMessage() {

@@ -1,12 +1,6 @@
 package com.project.messenger.ui.createRoom;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +11,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -29,7 +28,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.project.messenger.R;
 import com.project.messenger.adapters.UserAdapter;
 import com.project.messenger.models.User;
-import com.project.messenger.ui.user.LoginActivity;
 import com.project.messenger.utils.LoadingDialog;
 
 import java.util.ArrayList;

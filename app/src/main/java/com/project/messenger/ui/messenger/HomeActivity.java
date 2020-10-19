@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -18,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,7 +44,7 @@ import java.util.Arrays;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
-public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnClickRoomListener, View.OnClickListener {
+public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnClickRoomListener, View.OnClickListener, TextWatcher {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     private EditText edSearch;
@@ -78,6 +82,7 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
         requestBtn = findViewById(R.id.requestBtn);
         editProfileBtn = findViewById(R.id.editProfileBtn);
 
+        edSearch.addTextChangedListener(this);
         requestBtn.setOnClickListener(this);
         editProfileBtn.setOnClickListener(this);
         fabCreateRoom.setOnClickListener(this);
@@ -108,6 +113,7 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
                 Room room = adapter.getData().get(viewHolder.getAdapterPosition());
                 switch (direction) {
                     case ItemTouchHelper.LEFT:
+                        deleteRoomInDb(room.getId());
                         break;
                 }
             }
@@ -179,6 +185,33 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
                             rooms.add(room);
                         }
                         roomAdapter.setData(rooms);
+                    }
+                });
+    }
+
+    // On edSearch Changed
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        roomAdapter.getFilter().filter(s.toString());
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+    }
+
+
+    private void deleteRoomInDb(String id) {
+        db.collection("rooms").document(id).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(HomeActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
