@@ -40,16 +40,9 @@
             android:layout_height="wrap_content">
             <TextView
                 android:textColor="@color/colorWhite"
-                android:id="@+id/roomLastSender"
+                android:id="@+id/roomCreatedAt"
                 android:textSize="16sp"
-                android:text="shipper tran duy hung: "
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:textColor="@color/colorWhite"
-                android:id="@+id/roomLastMessage"
-                android:textSize="16sp"
-                android:text="Con cac"
+                android:text="Created at "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

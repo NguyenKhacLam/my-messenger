@@ -105,7 +105,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.HolderRoom> im
 
     public class HolderRoom extends RecyclerView.ViewHolder {
         private ImageView roomImage;
-        private TextView roomName, roomLastSender, roomLastMessage;
+        private TextView roomName, createdAt;
         public HolderRoom(@NonNull View itemView) {
             super(itemView);
             initViews();
@@ -114,13 +114,13 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.HolderRoom> im
         private void initViews() {
             roomImage = itemView.findViewById(R.id.roomImage);
             roomName = itemView.findViewById(R.id.roomName);
-            roomLastSender = itemView.findViewById(R.id.roomLastSender);
-            roomLastMessage = itemView.findViewById(R.id.roomLastMessage);
+            createdAt = itemView.findViewById(R.id.roomCreatedAt);
         }
 
         private void bindView(Room room) {
             roomName.setText(room.getName());
             Glide.with(roomImage).load(room.getImageUrl()).into(roomImage);
+            createdAt.setText("Happy chatting...!");
         }
     }
 
