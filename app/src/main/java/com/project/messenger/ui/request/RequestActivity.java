@@ -20,7 +20,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -113,19 +115,42 @@ public class RequestActivity extends AppCompatActivity implements RequestAdapter
     }
 
     @Override
-    public void onAcceptRequest(Request request) {
+    public void onAcceptRequest(final Request request) {
         db.collection("requests").document(request.getId())
                 .update("status", true)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(RequestActivity.this, "You've accepted this request!", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.e(TAG, "onFailure: " + e.getMessage());
+                    }
+                });
+        db.collection("requests").document(request.getId())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            DocumentSnapshot snapshot =  task.getResult();
+                            String roomId = snapshot.get("roomId").toString();
+                            String to = snapshot.get("to").toString();
+                            addMemToRoom(roomId, to);
+                        }
+                    }
+                });
+    }
+
+    private void addMemToRoom(String roomId, String email) {
+        db.collection("rooms").document(roomId)
+                .update("users", FieldValue.arrayUnion(email))
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(RequestActivity.this, "You've accepted this request!", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

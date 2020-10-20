@@ -141,9 +141,6 @@ public class CreateRoomActivity extends AppCompatActivity implements TextWatcher
                         loadingDialog.dismissDialog();
                         Toast.makeText(CreateRoomActivity.this, "Please select at least one user to chat!", Toast.LENGTH_SHORT).show();
                     }else {
-                        for (User user : usersRoomList) {
-                            createRequestInDb(user);
-                        }
                         createRoomInDb(name);
                     }
                 }
@@ -161,11 +158,12 @@ public class CreateRoomActivity extends AppCompatActivity implements TextWatcher
         dialog.show();
     }
 
-    private void createRequestInDb(User user) {
+    private void createRequestInDb(User user, String roomId) {
         Map<String, Object> request = new HashMap<>();
         request.put("from", currentUser.getEmail());
         request.put("to", user.getEmail());
-        request.put("message","We need to talk, " + user.getUsername());
+        request.put("roomId", roomId);
+        request.put("message", currentUser.getDisplayName() + "want to contact with you!");
         request.put("status", false);
         request.put("fromUserImage", currentUser.getPhotoUrl().toString());
         request.put("createdAt", new Date());
@@ -199,16 +197,19 @@ public class CreateRoomActivity extends AppCompatActivity implements TextWatcher
         room.put("name", name);
         room.put("imageUrl", "https://i.pinimg.com/564x/6a/a9/8a/6aa98a78f80433f60decb3c76fb016f1.jpg");
         room.put("createdAt", new Date());
-        room.put("users", listUserEmail);
+        ArrayList<String> userList = new ArrayList<>();
+        userList.add(currentUser.getEmail());
+        room.put("users", userList);
 
         db.collection("rooms").add(room)
-                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if (task.isSuccessful()){
-                            Toast.makeText(CreateRoomActivity.this, "Room created!", Toast.LENGTH_SHORT).show();
-                            finish();
+                    public void onSuccess(DocumentReference documentReference) {
+                        String roomId = documentReference.getId();
+                        for (User user : usersRoomList) {
+                            createRequestInDb(user, roomId);
                         }
+                        Toast.makeText(CreateRoomActivity.this, "Room created!", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
