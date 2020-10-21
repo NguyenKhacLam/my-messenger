@@ -15,4 +15,9 @@
     <string name="enter_email">Enter email</string>
     <string name="cancel">Cancel</string>
     <string name="add">Add</string>
+    <string name="sending_calling_request">Sending calling request!</string>
+    <string name="incoming_calling_invitation">Incoming calling invitation</string>
+    <string name="enter_new_name">Enter new name</string>
+    <string name="accept">Accept</string>
+    <string name="change_room_name">Change room name</string>
 </resources>

@@ -15,8 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -32,6 +34,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.project.messenger.R;
 import com.project.messenger.adapters.MessageAdapter;
 import com.project.messenger.models.Message;
+import com.project.messenger.ui.videoCall.OutgoingInvitationActivity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,7 +48,8 @@ public class MessageRoomActivity extends AppCompatActivity implements View.OnCli
     private MessageAdapter messageAdapter;
 
     private EditText edSend;
-    private ImageView chooseImageBtn, sendBtn;
+    private TextView tvRoomName;
+    private ImageView chooseImageBtn, sendBtn, roomImage;
 
     private FirebaseUser currentUser;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -63,6 +67,10 @@ public class MessageRoomActivity extends AppCompatActivity implements View.OnCli
     private void loadData() {
         Bundle extras = getIntent().getExtras();
         roomId = extras.getString("roomId");
+
+        tvRoomName.setText(extras.getString("roomName"));
+        Glide.with(this).load(extras.getString("roomImage")).into(roomImage);
+
         showMessages(roomId);
     }
 
@@ -70,6 +78,9 @@ public class MessageRoomActivity extends AppCompatActivity implements View.OnCli
         toolbar = findViewById(R.id.messageToolbar);
         recyclerView = findViewById(R.id.rcMessage);
         edSend = findViewById(R.id.edSendMessage);
+        roomImage = findViewById(R.id.roomMesImage);
+        tvRoomName = findViewById(R.id.roomMesName);
+
         chooseImageBtn = findViewById(R.id.btnSendImage);
         sendBtn = findViewById(R.id.btnSend);
 
@@ -107,6 +118,15 @@ public class MessageRoomActivity extends AppCompatActivity implements View.OnCli
                 Intent intent = new Intent(this, RoomDetailsActivity.class);
                 intent.putExtra("roomId", roomId);
                 startActivity(intent);
+                break;
+            case R.id.roomCall:
+                Intent intentCall = new Intent(this, OutgoingInvitationActivity.class);
+                
+                intentCall.putExtra("userName", currentUser.getDisplayName());
+                intentCall.putExtra("userEmail", currentUser.getEmail());
+                intentCall.putExtra("userImage", currentUser.getPhotoUrl().toString());
+                intentCall.putExtra("meetingType", "video");
+                startActivity(intentCall);
                 break;
         }
         return true;

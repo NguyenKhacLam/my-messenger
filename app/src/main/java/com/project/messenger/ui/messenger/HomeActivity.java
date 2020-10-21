@@ -20,8 +20,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,6 +32,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.project.messenger.R;
 import com.project.messenger.adapters.RoomAdapter;
 import com.project.messenger.models.Room;
@@ -62,8 +66,26 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (task.isSuccessful() && task.getResult() != null){
+                    String token = task.getResult().getToken();
+                    Bundle extras = getIntent().getExtras();
+                    if (extras != null){
+                        String userAcc = extras.getString("userAccId");
+                        sendFCMTokenToDb(token, userAcc);
+                    }
+                }
+            }
+        });
+
         initViews();
         loadData();
+    }
+
+    private void sendFCMTokenToDb(String token, String userAcc) {
+        db.collection("users").document(userAcc).update("fcmToken", token);
     }
 
     private void loadData() {
@@ -98,6 +120,8 @@ public class HomeActivity extends AppCompatActivity implements RoomAdapter.OnCli
     public void onClickRoom(Room room) {
         Intent intent = new Intent(this, MessageRoomActivity.class);
         intent.putExtra("roomId", room.getId());
+        intent.putExtra("roomName", room.getName());
+        intent.putExtra("roomImage", room.getImageUrl());
         startActivity(intent);
     }
 

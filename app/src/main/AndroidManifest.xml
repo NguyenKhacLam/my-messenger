@@ -12,19 +12,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.createRoom.CreateRoomActivity"></activity>
+        <activity android:name=".ui.videoCall.OutgoingInvitationActivity"></activity>
+        <activity android:name=".ui.videoCall.IncomingInvitationActivity" />
+        <activity android:name=".ui.createRoom.CreateRoomActivity" />
         <activity android:name=".ui.request.RequestActivity" />
         <activity android:name=".ui.user.ProfileActivity" />
         <activity android:name=".ui.messenger.RoomDetailsActivity" />
         <activity android:name=".ui.messenger.MessageRoomActivity" />
         <activity android:name=".ui.messenger.HomeActivity" />
-        <activity android:name=".ui.user.LoginActivity" android:noHistory="true">
+        <activity
+            android:name=".ui.user.LoginActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".firebase.MessagingServices">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

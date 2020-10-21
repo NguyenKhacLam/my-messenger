@@ -26,6 +26,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.project.messenger.R;
 import com.project.messenger.ui.messenger.HomeActivity;
 import com.project.messenger.utils.LoadingDialog;
@@ -43,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 9001;
     private ImageView loginBtn;
     private LoadingDialog loadingDialog;
+    private String userAccId;
 
     @Override
     protected void onStart() {
@@ -91,6 +94,7 @@ public class LoginActivity extends AppCompatActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+                userAccId = account.getId();
                 createUserInDb(account);
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
@@ -100,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void firebaseAuthWithGoogle(String idToken) {
+    private void firebaseAuthWithGoogle(final String idToken) {
         AuthCredential authCredential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -108,7 +112,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.isSuccessful()){
 //                    Log.d(TAG, "onComplete: Done");
                     loadingDialog.dismissDialog();
-                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    intent.putExtra("userAccId", userAccId);
+                    startActivity(intent);
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {

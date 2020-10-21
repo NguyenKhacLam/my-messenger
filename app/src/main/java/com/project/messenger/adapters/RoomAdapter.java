@@ -83,7 +83,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.HolderRoom> im
             if (constraint == null || constraint.length() == 0){
                 filterdRooms.addAll(dataFull);
             }else {
-                String filterPattern = constraint.toString().trim();
+                String filterPattern = constraint.toString().toLowerCase().trim();
                 for (Room room : dataFull){
                     if (room.getName().contains(filterPattern)){
                         filterdRooms.add(room);

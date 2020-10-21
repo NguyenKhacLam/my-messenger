@@ -1,10 +1,13 @@
 package com.project.messenger.models;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private String id;
     private String username;
     private String email;
     private String imageUrl;
+    private String fcmToken;
     private boolean status;
     private String createdAt;
 
@@ -15,6 +18,14 @@ public class User {
         this.imageUrl = imageUrl;
         this.status = status;
         this.createdAt = createdAt;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
     }
 
     public void setId(String id) {

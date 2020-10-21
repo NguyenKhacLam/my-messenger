@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/roomCall"
+        android:title="Call"
+        android:icon="@drawable/ic_baseline_local_phone_24"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/roomDetails"
         android:title="Room details"
         android:icon="@drawable/ic_baseline_info_24"

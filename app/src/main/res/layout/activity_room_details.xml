@@ -27,11 +27,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/roomDetailsImage"
-                android:src="@drawable/girl"
-                android:layout_width="100dp"
-                android:layout_height="100dp"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/roomDetailsImage"
+                    android:src="@drawable/girl"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"/>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/changeImageBtn"
+                    android:layout_marginTop="-30dp"
+                    android:layout_marginStart="-30dp"
+                    android:layout_below="@id/roomDetailsImage"
+                    android:layout_toEndOf="@id/roomDetailsImage"
+                    app:cardCornerRadius="9999dp"
+                    android:backgroundTint="@color/colorGreen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:src="@drawable/ic_baseline_camera_alt_24"
+                        android:padding="5dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"/>
+                </androidx.cardview.widget.CardView>
+            </RelativeLayout>
             <TextView
                 android:id="@+id/roomDetailsName"
                 android:text="Qwerty original"
@@ -47,6 +67,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/changeRoomNameBtn"
+                android:backgroundTint="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:padding="@dimen/padding_16"
+                    android:text="@string/change_room_name"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="18sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
                 android:id="@+id/addMemBtn"
                 android:backgroundTint="@color/colorPrimary"
