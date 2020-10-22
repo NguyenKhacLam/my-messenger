@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,6 +24,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.project.messenger.R;
 import com.project.messenger.networking.ApiBuilder;
 import com.project.messenger.ui.messenger.HomeActivity;
@@ -30,6 +33,8 @@ import com.project.messenger.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,6 +49,7 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
     private CardView cancelBtn;
 
     String meetingType = null;
+    String roomId = null;
 
     private FirebaseUser currentUser;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -83,6 +89,7 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
         userEmail.setText(extras.getString("userEmail"));
         Glide.with(this).load(extras.getString("userImage")).into(userImage);
         meetingType = extras.getString("meetingType");
+        roomId = extras.getString("roomId");
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,15 +99,30 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
         });
 
         if (meetingType != null && currentUser != null){
-            db.collection("users")
-                    .whereEqualTo("email", currentUser.getEmail())
+            db.collection("rooms").document(roomId)
                     .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    initialMeeting(meetingType, document.getId());
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            String[] userList = documentSnapshot.get("users").toString().replaceAll("[()\\[\\]]", "").replace(" ", "").split(",");
+                            for (String user: userList) {
+                                if (user != currentUser.getEmail()){
+                                    db.collection("users")
+                                            .whereEqualTo("email",user)
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        ArrayList<String> fcmTokens = new ArrayList<>();
+                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                            String fcmToken = document.get("fcmToken").toString();
+                                                            fcmTokens.add(fcmToken);
+                                                        }
+                                                        initialMeeting(meetingType, fcmTokens);
+                                                    }
+                                                }
+                                            });
                                 }
                             }
                         }
@@ -108,10 +130,10 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
         }
     }
 
-    private void initialMeeting(String meetingType, String receiverToken){
+    private void initialMeeting(String meetingType, ArrayList<String> receiverToken){
         try {
-            JSONArray tokens = new JSONArray();
-            tokens.put(receiverToken);
+            Log.d("Array", "initialMeeting:  " + receiverToken.size());
+            JSONArray tokens = new JSONArray(receiverToken);
 
             JSONObject body = new JSONObject();
             JSONObject data = new JSONObject();
@@ -126,6 +148,8 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
             body.put(Constants.REMOTE_REGISTRATION_IDS, tokens);
 
             sendRemoteMessage(body.toString(), Constants.REMOTE_MSG_INVITATION);
+            Log.d("JSON", "initialMeeting: " + body.toString());
+            Log.d("JSONArray", "initialMeeting: " + tokens);
         }catch (Exception e){
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             finish();
@@ -143,8 +167,8 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
                         Toast.makeText(OutgoingInvitationActivity.this, "Invitation sent successfully!", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-//                    Toast.makeText(OutgoingInvitationActivity.this, response.message(), Toast.LENGTH_SHORT).show();
-                    Log.e("FDM", "onResponse: " + response.message() );
+                    Toast.makeText(OutgoingInvitationActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                    Log.e("FDM", "Fail: " + response );
                     finish();
                 }
             }

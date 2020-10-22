@@ -126,6 +126,7 @@ public class MessageRoomActivity extends AppCompatActivity implements View.OnCli
                 intentCall.putExtra("userEmail", currentUser.getEmail());
                 intentCall.putExtra("userImage", currentUser.getPhotoUrl().toString());
                 intentCall.putExtra("meetingType", "video");
+                intentCall.putExtra("roomId", roomId);
                 startActivity(intentCall);
                 break;
         }
