@@ -15,6 +15,13 @@ public class Constants {
     public static String REMOTE_MSG_DATA = "data";
     public static String REMOTE_REGISTRATION_IDS = "registration_ids";
 
+    public static String REMOTE_MSG_INVITATION_RESPONSE = "invitationResponse";
+    public static String REMOTE_MSG_INVITATION_ACCEPTED = "accepted";
+    public static String REMOTE_MSG_INVITATION_REJECTED = "rejected";
+    public static String REMOTE_MSG_INVITATION_CANCELED = "cancelled";
+
+    public static String REMOTE_MSG_MEETING_ROOM = "meetingRoom";
+
     public static HashMap<String, String> getRemoteMessageHeader(){
         HashMap<String, String> headers = new HashMap<>();
         headers.put(
