@@ -23,7 +23,6 @@ public class MessagingServices extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         String type = remoteMessage.getData().get(Constants.REMOTE_MSG_TYPE);
-        Log.d("TAG", "onMessageReceived: " + remoteMessage.getData());
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (type != null) {
             if (remoteMessage.getData().get("email") != null && !firebaseUser.getEmail().equals(remoteMessage.getData().get("email"))){
@@ -33,7 +32,7 @@ public class MessagingServices extends FirebaseMessagingService {
                     intent.putExtra("username", remoteMessage.getData().get("username"));
                     intent.putExtra("email", remoteMessage.getData().get("email"));
                     intent.putExtra(Constants.REMOTE_MSG_INVITER_TOKEN, remoteMessage.getData().get(Constants.REMOTE_MSG_INVITER_TOKEN));
-
+                    intent.putExtra(Constants.REMOTE_MSG_MEETING_ROOM, remoteMessage.getData().get(Constants.REMOTE_MSG_MEETING_ROOM));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }

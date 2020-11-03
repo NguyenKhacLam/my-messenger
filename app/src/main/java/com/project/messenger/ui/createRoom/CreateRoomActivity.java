@@ -24,7 +24,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.project.messenger.R;
 import com.project.messenger.adapters.UserAdapter;
 import com.project.messenger.models.User;
@@ -73,12 +76,32 @@ public class CreateRoomActivity extends AppCompatActivity implements TextWatcher
     }
 
     private void loadData() {
-        ArrayList<User> users = new ArrayList<>();
-        users.add(new User("ahsdghajsda","Nguyen Khac Lam","khaclam2409@gmail.com","https://i.pinimg.com/236x/0f/04/f5/0f04f57ceff009be91cf82583a0c50d3.jpg",false, "24/10/2020"));
-        users.add(new User("ahsdghajsda","Nguyen The Huy","racruoivkl@gmail.com","https://i.pinimg.com/236x/0f/04/f5/0f04f57ceff009be91cf82583a0c50d3.jpg",false, "24/10/2020"));
-        users.add(new User("ahsdghajsda","Nguyen Manh Trung","shippertranduyhung@gmail.com","https://i.pinimg.com/236x/0f/04/f5/0f04f57ceff009be91cf82583a0c50d3.jpg",false, "24/10/2020"));
-        users.add(new User("ahsdghajsda","Dinh Manh Cuong","boysuccac@gmail.com","https://i.pinimg.com/236x/0f/04/f5/0f04f57ceff009be91cf82583a0c50d3.jpg",false, "24/10/2020"));
-        adapter.setData(users);
+        db.collection("users")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            ArrayList<User> users = new ArrayList<>();
+                            for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                User user = new User();
+                                user.setId(snapshot.getId());
+                                user.setUsername(snapshot.get("username").toString());
+                                user.setEmail(snapshot.get("email").toString());
+                                user.setImageUrl(snapshot.get("imageUrl").toString());
+                                users.add(user);
+                            }
+                            Log.d(TAG, "onComplete: " + users.size());
+                            adapter.setData(users);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
     private void initViews() {

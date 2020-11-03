@@ -3,12 +3,16 @@ package com.project.messenger.ui.videoCall;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +25,8 @@ import com.project.messenger.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.net.URL;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -92,16 +98,20 @@ public class IncomingInvitationActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                 if (response.isSuccessful()) {
                     if (type.equals(Constants.REMOTE_MSG_INVITATION_ACCEPTED)) {
-                        Toast.makeText(IncomingInvitationActivity.this, "Invitation accepted!", Toast.LENGTH_SHORT).show();
-                        Log.d("AOD", "onResponse: " + "Invitation accepted!");
+                        try {
+                            startActivity(new Intent(IncomingInvitationActivity.this, CallingActivity.class));
+                        } catch (Exception e) {
+                            Toast.makeText(IncomingInvitationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
                     } else {
                         Toast.makeText(IncomingInvitationActivity.this, "Invitation denied!", Toast.LENGTH_SHORT).show();
-                        Log.d("AOD", "onResponse: " + "Invitation denied!");
+                        finish();
                     }
                 } else {
                     Toast.makeText(IncomingInvitationActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                    finish();
                 }
-                finish();
             }
 
             @Override
@@ -117,8 +127,8 @@ public class IncomingInvitationActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String type = intent.getStringExtra(Constants.REMOTE_MSG_INVITATION_RESPONSE);
-            if (type != null){
-                if (type.equals(Constants.REMOTE_MSG_INVITATION_REJECTED)){
+            if (type != null) {
+                if (type.equals(Constants.REMOTE_MSG_INVITATION_REJECTED)) {
                     Toast.makeText(context, "Rejected", Toast.LENGTH_SHORT).show();
                     finish();
                 }

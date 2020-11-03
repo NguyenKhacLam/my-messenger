@@ -3,12 +3,15 @@ package com.project.messenger.ui.videoCall;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -39,7 +42,9 @@ import com.project.messenger.utils.Constants;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,6 +61,7 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
     String meetingType = null;
     String roomId = null;
     String userToken = "";
+    String meetingRoom = "";
 
     private FirebaseUser currentUser;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -162,6 +168,9 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
             data.put("email", currentUser.getEmail());
             data.put(Constants.REMOTE_MSG_INVITER_TOKEN, inviterToken);
 
+            meetingRoom = currentUser.getUid() + "_" + UUID.randomUUID().toString().substring(0,5);
+            data.put(Constants.REMOTE_MSG_MEETING_ROOM, meetingRoom);
+
             body.put(Constants.REMOTE_MSG_DATA, data);
             body.put(Constants.REMOTE_REGISTRATION_IDS, tokens);
 
@@ -227,7 +236,12 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
             String type = intent.getStringExtra(Constants.REMOTE_MSG_INVITATION_RESPONSE);
             if (type != null){
                 if (type.equals(Constants.REMOTE_MSG_INVITATION_ACCEPTED)){
-                    Toast.makeText(context, "Accepted", Toast.LENGTH_SHORT).show();
+                    try {
+                        startActivity(new Intent(OutgoingInvitationActivity.this, CallingActivity.class));
+                    } catch (Exception e) {
+                        Toast.makeText(OutgoingInvitationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 }else if (type.equals(Constants.REMOTE_MSG_INVITATION_REJECTED)){
                     Toast.makeText(context, "Rejected", Toast.LENGTH_SHORT).show();
                     finish();

@@ -11,6 +11,9 @@ public class User implements Serializable {
     private boolean status;
     private String createdAt;
 
+    public User() {
+    }
+
     public User(String id, String username, String email, String imageUrl, boolean status, String createdAt) {
         this.id = id;
         this.username = username;
